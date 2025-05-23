@@ -1,0 +1,53 @@
+:root {
+    --primary-color: #ff99cc;
+    --secondary-color: #99ccff;
+    --background-gradient: linear-gradient(135deg, #fff5f5 0%, #f8f4ff 100%);
+}
+
+/* Base styles */
+body {
+    font-family: 'Segoe UI', system-ui;
+    background: var(--background-gradient);
+}
+
+/* Chat container */
+.stApp {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Message bubbles */
+.stChatMessage {
+    border-radius: 20px !important;
+    margin: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Avatar styling */
+[data-testid="stChatMessage"] img {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Voice button */
+.stButton>button {
+    background: var(--primary-color) !important;
+    transition: all 0.3s ease;
+}
+
+.stButton>button:hover {
+    transform: scale(1.1);
+}
+
+/* Input field */
+.stTextInput>div>div>input {
+    border-radius: 25px !important;
+    padding: 1rem !important;
+}
+
+/* Sidebar styling */
+.stSidebar {
+    background: var(--background-gradient);
+    padding: 1.5rem;
+}
