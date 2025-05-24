@@ -1,53 +1,69 @@
+/* Base styles */
 :root {
     --primary-color: #ff99cc;
     --secondary-color: #99ccff;
     --background-gradient: linear-gradient(135deg, #fff5f5 0%, #f8f4ff 100%);
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Base styles */
-body {
-    font-family: 'Segoe UI', system-ui;
-    background: var(--background-gradient);
-}
-
-/* Chat container */
+/* Full Page Layout */
 .stApp {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
-/* Message bubbles */
+/* Chat messages */
 .stChatMessage {
     border-radius: 20px !important;
-    margin: 1rem 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 1.5rem 0 !important;
+    box-shadow: var(--shadow);
+    padding: 1.5rem !important;
+    border: none !important;
 }
 
 /* Avatar styling */
 [data-testid="stChatMessage"] img {
-    border: 2px solid var(--primary-color);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    object-fit: cover;
 }
 
-/* Voice button */
-.stButton>button {
-    background: var(--primary-color) !important;
-    transition: all 0.3s ease;
-}
-
-.stButton>button:hover {
-    transform: scale(1.1);
-}
 
 /* Input field */
 .stTextInput>div>div>input {
     border-radius: 25px !important;
-    padding: 1rem !important;
+    padding: 1rem 1.5rem !important;
+    font-size: 1.1rem !important;
+    border: 2px solid var(--primary-color) !important;
 }
 
-/* Sidebar styling */
+/* Buttons */
+.stButton>button {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-radius: 50px !important;
+    padding: 0.75rem 2rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.stButton>button:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow);
+}
+
+/* Sidebar */
+/* Sidebar Fixes */
 .stSidebar {
-    background: var(--background-gradient);
-    padding: 1.5rem;
+    padding: 1.5rem !important;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.05) !important;
+}
+
+/* Title */
+.stTitle {
+    color: #1b4ba5 !important;
+    text-align: center !important;
+    margin-bottom: 2rem !important;
+    font-family: 'Pacifico', cursive !important;
 }

@@ -3,6 +3,7 @@ streamlit>=1.32.0
 python-dotenv>=1.0.0
 SpeechRecognition>=3.10.0
 pyttsx3>=2.90
+httpx>=0.27.0
 pyaudio>=0.2.14
 gtts>=2.4.0
 pytest>=7.0.0

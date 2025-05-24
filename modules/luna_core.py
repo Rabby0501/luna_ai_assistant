@@ -1,69 +1,72 @@
 import os
-import openai
+import httpx
 import pyttsx3
 import speech_recognition as sr
 from dotenv import load_dotenv
 from openai import OpenAI
 from typing import Generator
 
-# Initialize environment
+# ---- Configuration ----
+# ---- Configuration ----
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+#client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# --- Voice Configuration ---
-TTS_ENGINE = pyttsx3.init()
-TTS_ENGINE.setProperty('rate', 150)
-TTS_ENGINE.setProperty('volume', 0.9)
-TTS_VOICE = TTS_ENGINE.getProperty('voices')[1].id  # Female voice
-TTS_ENGINE.setProperty('voice', TTS_VOICE)
+# With this proxy-disabled client:
+# Initialize OpenAI client with proxy handling
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+    http_client=httpx.Client(
+        transport=httpx.HTTPTransport(
+            retries=3,
+            proxy=None  # Explicitly disable proxies
+        )
+    )
+)
 
-# --- AI Configuration ---
-MODEL_NAME = "gpt-3.5-turbo"
-MAX_HISTORY = 14
-TEMPERATURE = 0.75
-
+# ---- Constants ----
 LUNA_SYSTEM_PROMPT = """
-[Previous system prompt with enhancements]
-You can now understand and generate speech.
-When appropriate, add sound-related emojis like 🎵🔊🎶
+You are 'Luna', a cheerful AI assistant. Use emojis 🌸✨, be supportive, and stay positive.
+Always respond kindly. Your hobbies: stargazing, tea, and helping humans.
 """
 
+# ---- Voice Engine ----
+tts_engine = pyttsx3.init()
+tts_engine.setProperty('rate', 150)
+tts_engine.setProperty('volume', 0.9)
+
+# ---- Core Functions ----
 def manage_history(messages: list) -> list:
-    """Optimize conversation context"""
-    return [messages[0]] + messages[-(MAX_HISTORY-1):] if len(messages) > MAX_HISTORY else messages
+    return [messages[0]] + messages[-13:] if len(messages) > 14 else messages
 
 def text_to_speech(text: str) -> None:
-    """Convert text to speech with error handling"""
     try:
-        TTS_ENGINE.say(text)
-        TTS_ENGINE.runAndWait()
+        tts_engine.say(text)
+        tts_engine.runAndWait()
     except Exception as e:
-        print(f"TTS Error: {str(e)}")
+        print(f"TTS Error: {e}")
 
 def speech_to_text() -> str:
-    """Convert speech to text using microphone"""
     r = sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Listening...")
-        audio = r.listen(source, timeout=10)
-        try:
+    try:
+        with sr.Microphone() as source:
+            r.adjust_for_ambient_noise(source)
+            audio = r.listen(source, timeout=8)
             return r.recognize_google(audio)
-        except sr.UnknownValueError:
-            return "Could you please repeat that?"
-        except Exception as e:
-            return f"Voice error: {str(e)}"
+    except sr.UnknownValueError:
+        return "Could you please repeat that?"
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 def get_luna_response(messages: list) -> Generator[str, None, None]:
-    """Generate streaming response with enhanced error handling"""
     try:
         stream = client.chat.completions.create(
-            model=MODEL_NAME,
+            model="gpt-3.5-turbo",
             messages=manage_history(messages),
-            temperature=TEMPERATURE,
+            temperature=0.7,
             stream=True
         )
         for chunk in stream:
-            if chunk.choices[0].delta.content:
-                yield chunk.choices[0].delta.content
+            if content := chunk.choices[0].delta.content:
+                yield content
     except Exception as e:
-        yield f"🌧️ Oops! A little hiccup: {str(e)}. Let's try again?"
+        yield f"🌧️ Oops! A little hiccup: {str(e)}"
